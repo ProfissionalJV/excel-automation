@@ -19,9 +19,9 @@ Somava valores de duas planilhas diferentes em uma base geral e, ao final, gerav
 Poderão ser Encontrados na pasta docs (os prints são de estruturas 'demo' que apresentam características semelhantes ao original)
 
 ## 📂 Estrutura da pasta
-src/ → códigos VBA de exemplo
-docs/ → prints de tela
-exemplos/ → prints exemplos
+- src/ → códigos VBA de exemplo
+- docs/ → prints de tela
+- exemplos/ → prints exemplos
 
 ---
 
