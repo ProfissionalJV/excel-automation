@@ -1,0 +1,87 @@
+' File: atualizar_qtd_por_estado.bas
+' Versão demo/anonimizada 
+
+Option Explicit
+
+Sub Atualizar_QTD_POR_ESTADO()
+    Dim wsGeral As Worksheet
+    Dim wbA As Workbook, wbB As Workbook
+    Dim wsA As Worksheet, wsB As Worksheet
+    Dim dictItens As Object, dictComps As Object
+    Dim linhaGeral As Long, estado As String
+
+    ' Peça ao usuário para selecionar os dois arquivos de entrada (versão segura)
+    Dim caminhoA As String, caminhoB As String
+    caminhoA = SelecionarArquivoExcel("Selecione a planilha do ano A (ex.: 2024)")
+    If caminhoA = "" Then Exit Sub
+    caminhoB = SelecionarArquivoExcel("Selecione a planilha do ano B (ex.: 2025)")
+    If caminhoB = "" Then Exit Sub
+
+    Set wbA = Workbooks.Open(Filename:=caminhoA, ReadOnly:=True)
+    Set wbB = Workbooks.Open(Filename:=caminhoB, ReadOnly:=True)
+
+    On Error Resume Next
+    Set wsGeral = ThisWorkbook.Worksheets("QTD POR ESTADO")
+    If wsGeral Is Nothing Then
+        MsgBox "Crie uma aba chamada 'QTD POR ESTADO' no workbook atual e rode novamente.", vbExclamation
+        wbA.Close False: wbB.Close False
+        Exit Sub
+    End If
+    On Error GoTo 0
+
+    Set dictItens = CreateObject("Scripting.Dictionary")
+    Set dictComps = CreateObject("Scripting.Dictionary")
+
+    ' Carregar dados (demo)
+    Call CarregarDadosEstado(wsGeral, dictItens, dictComps, wbA.Name) ' demo usa dados fictícios
+    Call CarregarDadosEstado(wsGeral, dictItens, dictComps, wbB.Name)
+
+    ' Atualizar planilha principal (linhas 3 a 29 - ajustável)
+    For linhaGeral = 3 To 29
+        estado = Trim(wsGeral.Cells(linhaGeral, "B").Value)
+        If estado <> "" Then
+            If dictItens.exists(estado) Then
+                wsGeral.Cells(linhaGeral, "C").Value = dictItens(estado)
+                wsGeral.Cells(linhaGeral, "D").Value = dictComps(estado)
+            Else
+                wsGeral.Cells(linhaGeral, "C").Value = 0
+                wsGeral.Cells(linhaGeral, "D").Value = 0
+            End If
+        End If
+    Next linhaGeral
+
+    wbA.Close SaveChanges:=False
+    wbB.Close SaveChanges:=False
+
+    MsgBox "Planilha 'QTD POR ESTADO' atualizada (demo).", vbInformation
+End Sub
+
+Function SelecionarArquivoExcel(msg As String) As String
+    Dim fd As FileDialog
+    Set fd = Application.FileDialog(msoFileDialogFilePicker)
+    fd.AllowMultiSelect = False
+    fd.Title = msg
+    fd.Filters.Clear
+    fd.Filters.Add "Arquivos Excel", "*.xls; *.xlsx; *.xlsm"
+    If fd.Show = -1 Then
+        SelecionarArquivoExcel = fd.SelectedItems(1)
+    Else
+        SelecionarArquivoExcel = ""
+    End If
+End Function
+
+' Demo: Carrega dados fictícios (substitua pela lógica real quando for publicar internamente)
+Sub CarregarDadosEstado(wsRef As Worksheet, dictItens As Object, dictComps As Object, origem As String)
+    Dim estados As Variant, i As Long
+    estados = Array("SP", "RJ", "MG", "BA", "RS")
+    Randomize
+    For i = LBound(estados) To UBound(estados)
+        If Not dictItens.exists(estados(i)) Then
+            dictItens.Add estados(i), Int((50 * Rnd) + 1)
+            dictComps.Add estados(i), Int((20 * Rnd) + 1)
+        Else
+            dictItens(estados(i)) = dictItens(estados(i)) + Int((50 * Rnd) + 1)
+            dictComps(estados(i)) = dictComps(estados(i)) + Int((20 * Rnd) + 1)
+        End If
+    Next i
+End Sub
