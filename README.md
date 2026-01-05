@@ -26,5 +26,5 @@ Poderão ser Encontrados na pasta docs (os prints são de estruturas 'demo' que 
 ---
 
 As estruturas reais e originais possuem informações privadas e de uso interno.
-Os códigos disponibilizados neste repositório foram adaptados para uma versão exemplar, exclusivamente para fins de apresentação, documentação e portfólio.
+Os códigos originais foram adaptados exclusivamente para fins de apresentação, documentação e portfólio.
 
